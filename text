@@ -1,0 +1,90 @@
+from flask import Flask, render_template, request, send_file
+import os
+import gzip
+app = Flask(__name__)
+UPLOAD_FOLDER = "uploads"
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+@app.route("/")
+def home():
+    return render_template("index.html"
+@app.route("/compress", methods=["POST"])
+def compress():
+    file = request.files["file"]
+    if file.filename == "":
+        return "Please select a file"
+    input_file = os.path.join(
+        UPLOAD_FOLDER,
+        file.filename
+    )
+    file.save(input_file)
+    output_file = input_file + ".gz"
+    with open(input_file, "rb") as f_in:
+        with gzip.open(output_file, "wb") as f_out:
+            f_out.writelines(f_in)
+    return send_file(
+        output_file,
+        as_attachment=True
+    )
+if __name__ == "__main__":
+    app.run(
+        host="0.0.0.0",
+        port=5000
+    )
+<!DOCTYPE html>
+<html>
+<head>
+<title>Compression App</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#eee;
+    text-align:center;
+    padding:50px;
+}
+
+.box{
+    background:white;
+    width:400px;
+    margin:auto;
+    padding:30px;
+    border-radius:10px;
+}
+
+button{
+    background:blue;
+    color:white;
+    padding:10px 25px;
+    border:none;
+    cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>File Compression</h1>
+
+<form action="/compress" method="POST" enctype="multipart/form-data">
+
+<input type="file" name="file" required>
+
+<br><br>
+
+<button type="submit">
+Compress
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>
+docker build -t compression-app .
+docker run -p 5000:5000 compression-app
+http://localhost:5000
