@@ -7,15 +7,14 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background: #f4f4f4;
             padding: 20px;
         }
         pre {
-            background-color: #272822;
-            color: #f8f8f2;
-            padding: 15px;
+            background: #272822;
+            color: white;
+            padding: 20px;
             border-radius: 8px;
-            overflow-x: auto;
         }
         code {
             font-family: Consolas, monospace;
@@ -23,10 +22,12 @@
     </style>
 </head>
 <body>
-    <h2>Dockerfile</h2>
-    <pre><code>FROM python:3.9-slim
+<h2>Dockerfile</h2>
+<pre><code>
+FROM python:3.9-slim
 RUN apt-get update && \
     apt-get install -y ghostscript && \
-    rm -rf /var/lib/apt/lists/*</code></pre>
+    rm -rf /var/lib/apt/lists/*
+</code></pre>
 </body>
 </html>
