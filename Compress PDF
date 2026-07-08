@@ -1,0 +1,49 @@
+import os
+import subprocess
+
+def compress_pdf(input_pdf, output_pdf, target_size_kb):
+    quality_levels = [
+        "/screen",     # Lowest quality, highest compression
+        "/ebook",
+        "/printer",
+        "/prepress",
+        "/default"
+    ]
+
+    gs_command = "gs"  # Linux/Mac
+    if os.name == "nt":
+        gs_command = "gswin64c"
+
+    for quality in quality_levels:
+        cmd = [
+            gs_command,
+            "-sDEVICE=pdfwrite",
+            "-dCompatibilityLevel=1.4",
+            f"-dPDFSETTINGS={quality}",
+            "-dNOPAUSE",
+            "-dQUIET",
+            "-dBATCH",
+            f"-sOutputFile={output_pdf}",
+            input_pdf
+        ]
+
+        subprocess.run(cmd)
+
+        if os.path.exists(output_pdf):
+            size_kb = os.path.getsize(output_pdf) / 1024
+            print(f"{quality}: {size_kb:.2f} KB")
+
+            if size_kb <= target_size_kb:
+                print("Target size achieved!")
+                return True
+
+    print("Could not reach the target size.")
+    return False
+
+
+# Example
+compress_pdf(
+    input_pdf="input.pdf",
+    output_pdf="compressed.pdf",
+    target_size_kb=200
+)
